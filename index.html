@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tab Haven: Save, Restore & Organize Your Tabs</title>
+    <meta
+      name="description"
+      content="Tab Haven is a Chrome extension that saves and restores your open tabs, so you never lose a tab again. Folders, search, workspace switch and one-click import from OneTab and Session Buddy. 100% local."
+    />
+    <style>
+      :root {
+        --a1: #4f6ef7;
+        --a2: #8b3df4;
+        --ink: #171a22;
+        --muted: #6b7180;
+        --line: #e9ebf2;
+        --soft: #f6f7fb;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: var(--ink);
+        line-height: 1.6;
+        background: #fff;
+      }
+      a { color: var(--a1); }
+      .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+      .grad { background: linear-gradient(135deg, var(--a1), var(--a2)); }
+
+      header.hero {
+        background: linear-gradient(170deg, #fff 0%, var(--soft) 100%);
+        border-bottom: 1px solid var(--line);
+        padding: 66px 0 58px;
+        text-align: center;
+      }
+      .logo {
+        width: 66px; height: 66px; border-radius: 17px;
+        display: inline-flex; align-items: center; justify-content: center;
+        margin-bottom: 22px; box-shadow: 0 12px 30px rgba(90, 70, 230, 0.32);
+      }
+      .logo svg { width: 40px; height: 40px; }
+      h1 { font-size: 42px; line-height: 1.12; margin: 0 0 14px; letter-spacing: -0.5px; }
+      .sub { font-size: 19px; color: var(--muted); max-width: 640px; margin: 0 auto 30px; }
+      .cta {
+        display: inline-block; color: #fff; text-decoration: none;
+        font-weight: 600; font-size: 16px; padding: 14px 28px; border-radius: 11px;
+        box-shadow: 0 8px 22px rgba(90, 70, 230, 0.30);
+      }
+      .cta.secondary {
+        background: #fff; color: var(--a1); border: 1px solid var(--line);
+        box-shadow: none; margin-left: 8px;
+      }
+      .pillrow { margin-top: 22px; }
+      .pill {
+        display: inline-block; font-size: 13px; font-weight: 600; color: var(--muted);
+        border: 1px solid var(--line); border-radius: 20px; padding: 5px 13px; margin: 4px;
+      }
+
+      section { padding: 58px 0; border-bottom: 1px solid var(--line); }
+      h2 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.3px; }
+      .lead { color: var(--muted); margin: 0 0 34px; font-size: 17px; }
+      .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .card { border: 1px solid var(--line); border-radius: 14px; padding: 22px; background: var(--soft); }
+      .card h3 { margin: 0 0 6px; font-size: 17px; }
+      .card p { margin: 0; color: var(--muted); font-size: 15px; }
+      .emoji { font-size: 22px; }
+
+      .pricing { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 640px; margin: 0 auto; }
+      .plan { border: 1px solid var(--line); border-radius: 16px; padding: 28px 24px; text-align: center; }
+      .plan.featured { border-color: transparent; box-shadow: 0 14px 40px rgba(90, 70, 230, 0.18); position: relative; }
+      .plan.featured::before {
+        content: ""; position: absolute; inset: 0; border-radius: 16px; padding: 1.5px;
+        background: linear-gradient(135deg, var(--a1), var(--a2));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+      }
+      .plan .name { font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 12px; }
+      .plan .price { font-size: 36px; font-weight: 800; margin: 10px 0 0; letter-spacing: -1px; }
+      .plan .per { color: var(--muted); font-size: 14px; }
+      .plan .altbox {
+        margin: 16px 0 2px; padding-top: 14px; border-top: 1px dashed var(--line);
+        font-size: 14.5px; color: var(--ink);
+      }
+      .plan .altbox strong { color: var(--a1); font-size: 16px; }
+      .plan ul { list-style: none; padding: 0; margin: 20px 0 0; text-align: left; font-size: 14.5px; }
+      .plan li { padding: 6px 0 6px 26px; position: relative; }
+      .plan li::before { content: "✓"; position: absolute; left: 0; color: var(--a1); font-weight: 800; }
+      .badge { display: inline-block; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 11px; border-radius: 20px; margin-bottom: 12px; }
+
+      .faq h3 { margin: 22px 0 4px; font-size: 17px; }
+      .faq p { margin: 0; color: var(--muted); }
+
+      footer { padding: 42px 0; text-align: center; color: var(--muted); font-size: 14px; }
+      footer a { margin: 0 8px; }
+
+      @media (max-width: 640px) {
+        .grid, .pricing { grid-template-columns: 1fr; }
+        h1 { font-size: 33px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap">
+        <div class="logo grad">
+          <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+            <rect x="34" y="36" width="60" height="17" rx="6" fill="#fff" />
+            <rect x="34" y="59" width="60" height="17" rx="6" fill="#fff" opacity="0.82" />
+            <rect x="34" y="82" width="60" height="17" rx="6" fill="#fff" opacity="0.64" />
+          </svg>
+        </div>
+        <h1>Never lose your tabs again</h1>
+        <p class="sub">
+          Tab Haven saves your open tabs with one click and brings them back whenever you need them.
+          Organize them into folders, search across everything, and switch between projects in a second.
+          Everything stays in your browser.
+        </p>
+        <a class="cta grad" href="#pricing">See pricing</a>
+        <a class="cta secondary" href="#features">What it does</a>
+        <div class="pillrow">
+          <span class="pill">100% local</span>
+          <span class="pill">No account</span>
+          <span class="pill">No tracking</span>
+          <span class="pill">Import from OneTab &amp; Session Buddy</span>
+        </div>
+      </div>
+    </header>
+
+    <section id="features">
+      <div class="wrap">
+        <h2>Built for people with a lot of tabs</h2>
+        <p class="lead">Simple to use, serious when you need it.</p>
+        <div class="grid">
+          <div class="card">
+            <div class="emoji">🗂️</div>
+            <h3>Save &amp; restore</h3>
+            <p>Save every open tab as a set and reopen it later in a new window or the current one, exactly as it was.</p>
+          </div>
+          <div class="card">
+            <div class="emoji">🔍</div>
+            <h3>Search everything</h3>
+            <p>Find any saved tab by name or link, even across hundreds of sets. The search that OneTab never had.</p>
+          </div>
+          <div class="card">
+            <div class="emoji">📁</div>
+            <h3>Folders &amp; colors</h3>
+            <p>Group your sets into colored folders so your work never turns into an endless list.</p>
+          </div>
+          <div class="card">
+            <div class="emoji">⇄</div>
+            <h3>Workspace switch</h3>
+            <p>Open a project and set aside the current tabs in one click. Your previous tabs are saved, never lost.</p>
+          </div>
+          <div class="card">
+            <div class="emoji">🧷</div>
+            <h3>Keeps groups &amp; pinned tabs</h3>
+            <p>Your Chrome tab groups and pinned tabs come back with their names and colors intact.</p>
+          </div>
+          <div class="card">
+            <div class="emoji">🛟</div>
+            <h3>Auto-backup</h3>
+            <p>Tab Haven quietly keeps recent snapshots, so you can roll back if anything ever goes wrong.</p>
+          </div>
+          <div class="card">
+            <div class="emoji">📥</div>
+            <h3>One-click import</h3>
+            <p>Coming from OneTab or Session Buddy? Bring all your saved tabs across in a single step.</p>
+          </div>
+          <div class="card">
+            <div class="emoji">🔒</div>
+            <h3>100% local</h3>
+            <p>Everything is stored in your own browser. No account, no server, nothing ever leaves your device.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="wrap">
+        <h2>Simple pricing</h2>
+        <p class="lead">Start free. Upgrade once for the power features and peace of mind.</p>
+        <div class="pricing">
+          <div class="plan">
+            <div class="name">Free</div>
+            <div class="price">€0</div>
+            <div class="per">forever</div>
+            <ul>
+              <li>Unlimited save &amp; restore</li>
+              <li>Search, sort &amp; pin favorites</li>
+              <li>Up to 3 folders</li>
+              <li>Import from OneTab &amp; Session Buddy</li>
+              <li>Manual backup export</li>
+            </ul>
+          </div>
+          <div class="plan featured">
+            <span class="badge grad">Best value</span>
+            <div class="name">Pro Lifetime</div>
+            <div class="price">€14.99</div>
+            <div class="per">one-time, yours forever</div>
+            <div class="altbox">Prefer a subscription? <strong>€2.99 / month</strong></div>
+            <ul>
+              <li>Everything in Free</li>
+              <li>Unlimited &amp; colored folders</li>
+              <li>Workspace switch</li>
+              <li>Keeps groups &amp; pinned tabs</li>
+              <li>Notes on any set</li>
+              <li>Automatic backup &amp; restore points</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq">
+      <div class="wrap">
+        <h2>Questions</h2>
+        <h3>Where are my tabs stored?</h3>
+        <p>Only in your own browser. Tab Haven has no servers and never uploads your tabs or your browsing.</p>
+        <h3>Do I need an account?</h3>
+        <p>No. Install it and start saving tabs right away. Nothing to sign up for.</p>
+        <h3>Can I move to a new computer?</h3>
+        <p>Yes. Use Export backup to save a file, then Import it on the other computer. Your Pro license works on up to 5 devices with the license key from your purchase email.</p>
+        <h3>How does the free plan compare to others?</h3>
+        <p>The free plan already does more than most paid tools: unlimited saving, search, import and manual backup. Pro adds unlimited colored folders, workspace switch, group and pinned tab preservation, notes, and automatic backups.</p>
+        <h3>What is your refund policy?</h3>
+        <p>Refunds are handled securely through Lemon Squeezy, our payment provider, under their standard policy. If Pro is not right for you, just reach out and we will take care of it.</p>
+        <p style="margin-top:22px;"><a href="guide.html">Read the full guide and help page →</a></p>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <p>Tab Haven is an independent tool by LTech (Lyubenov Technologies).</p>
+        <p>
+          <a href="guide.html">Guide &amp; Help</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="mailto:lyubenovtechnologies@gmail.com">Contact</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
